@@ -178,7 +178,7 @@ void MyDraw2()
 	GLuint inUV = 0;
 	GLuint uProj = 0, uView = 0;
 	GLuint kImage = 0;
-	GLuint kTexID = 0;
+	
 	if( !GL_LoadGLSLProgramFromFile("Skybox.vert", "Skybox.frag", &program,
 		eGLSLBindingAttribute, "inPosition", &inPosition,
 		eGLSLBindingAttribute, "inUVs", &inUV,
@@ -188,7 +188,9 @@ void MyDraw2()
 		eGLSLBindingEnd) )
 		// if the glsl shader successfully compiled and linked then we will use it
 	{
-		GL_LoadTextureImage("image1.jpg", kTexID);
+		GLuint kTexID[6] = {0};
+		for(int i = 0 ; i < 6 ; i++)
+			GL_LoadTextureImage("image1.jpg", kTexID[i]);
 
 		glViewport(0, 0, WIN_GetWidth(), WIN_GetHeight() );  // where are we drawing in the window (x, y, width, height) of pixel units.  (0, 0) is lower left corner.
 		glClear(GL_COLOR_BUFFER_BIT);  // the color buffer will contain the output from the fragment shader
@@ -272,26 +274,29 @@ void MyDraw2()
 		glUseProgram(program);
 		glBindVertexArray(va);
 
-		int textureUnit = 0;
-		glActiveTexture(GL_TEXTURE0+textureUnit);  // this line and the one below associate kImage with GL_TEXTURE0
-		glBindTexture(GL_TEXTURE_2D, kTexID);
-		glUniform1i(kImage, textureUnit);  // this sets the fragment shader variable 'kImage' to the value 0 - this means use the texture in GL_TEXTURE0
-
+		
 		// set view / proj matrix.
 		glm::mat4 projMat = glm::perspective(40.0f, 1.0f, 0.0f, 10.0f);
-		glm::mat4 viewMat = glm::lookAt(glm::vec3(0,0,0), glm::vec3(1,-1,1), glm::vec3(0,1,0));
+		glm::mat4 viewMat = glm::lookAt(glm::vec3(0,0,0), glm::vec3(-1,1,-1), glm::vec3(0,1,0));
 		glUniformMatrix4fv(uProj, 1, false, &projMat[0][0]);
 		glUniformMatrix4fv(uView, 1, false, &viewMat[0][0]);
 
-		glDrawArrays(GL_TRIANGLES, 0, 36);  // this draws a 'triangle strip' (search google images) that ends up drawing a textured rectangle
+		for(int i = 0 ; i < 6 ; i++) {
+			int textureUnit = 0;
+			glActiveTexture(GL_TEXTURE0+textureUnit);  // this line and the one below associate kImage with GL_TEXTURE0
+			glBindTexture(GL_TEXTURE_2D, kTexID[i]);
+			glUniform1i(kImage, textureUnit);  // this sets the fragment shader variable 'kImage' to the value 0 - this means use the texture in GL_TEXTURE0
 
+			glDrawArrays(GL_TRIANGLES, i * 6, 6);  // this draws a 'triangle strip' (search google images) that ends up drawing a textured rectangle
+		}
 
 		// Done.  Free resources.
 		glUseProgram(0);  
 		glDeleteProgram(program);
 		glDeleteBuffers(1, &vertVBO);
 		glDeleteVertexArrays(1, &va);
-		glDeleteTextures(1, &kImage);
+		for(int i = 0 ; i < 6 ; i++)
+			glDeleteTextures(1, &kTexID[i]);
 	}
 }
 
