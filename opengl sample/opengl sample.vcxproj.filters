@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="sample.cpp" />
+    <ClCompile Include="main.cpp">
+      <Filter>Framework files</Filter>
+    </ClCompile>
+    <ClCompile Include="VWMath.cpp">
+      <Filter>Framework files</Filter>
+    </ClCompile>
+    <ClCompile Include="utilities.cpp">
+      <Filter>Framework files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="sample.h" />
+    <ClInclude Include="Resource.h">
+      <Filter>Framework files</Filter>
+    </ClInclude>
+    <ClInclude Include="utilities.h">
+      <Filter>Framework files</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Framework files</Filter>
+    </ClInclude>
+    <ClInclude Include="VWMath.h">
+      <Filter>Framework files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Framework files">
+      <UniqueIdentifier>{44e4e996-074f-47b9-8c36-c632f61591d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="glsl source">
+      <UniqueIdentifier>{00adba83-95c4-421c-9168-2d81326ef92e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="opengl sample.ico">
+      <Filter>Framework files</Filter>
+    </None>
+    <None Include="..\glsl\shader1.fs">
+      <Filter>glsl source</Filter>
+    </None>
+    <None Include="..\glsl\shader1.vs">
+      <Filter>glsl source</Filter>
+    </None>
+    <None Include="..\glsl\shader0.fs">
+      <Filter>glsl source</Filter>
+    </None>
+    <None Include="..\glsl\shader0.vs">
+      <Filter>glsl source</Filter>
+    </None>
+    <None Include="..\glsl\Skybox.frag">
+      <Filter>glsl source</Filter>
+    </None>
+    <None Include="..\glsl\Skybox.vert">
+      <Filter>glsl source</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="opengl sample.rc">
+      <Filter>Framework files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
