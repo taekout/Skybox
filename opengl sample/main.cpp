@@ -477,8 +477,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_KEYDOWN: {
 			if( wParam == VK_UP ) {
 				gCurrentDrawTest++;
-			} else if( wParam == VK_DOWN ) {
+			}
+			else if( wParam == VK_DOWN ) {
 				gCurrentDrawTest = max(0, gCurrentDrawTest-1);
+			}
+			else if ( wParam==VK_ESCAPE ) {
+				PostQuitMessage(0);
 			}
 			break;
 		}
