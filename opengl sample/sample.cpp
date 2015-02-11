@@ -200,19 +200,50 @@ void MyDraw2()
 		// is the space the vertex shader output gl_Position should be in) and finally opengl will transform that coordinate into normalized device coordinates by
 		// dividing by the coordinate's w.
 
-		float vertices[] = {  // 4 vertices of a rectangle (z component is 0, w component is 1).
-			-1, -1, 0, 1,
-			1,  -1, 0, 1,
-			-1,  1, 0, 1,
-			1,   0.4f, 0, 1
+		float vertices[] = { //interleaved vertex(3) , uv(2)
+			-1.0f,  1.0f, -1.0f, 0, 1,
+			-1.0f, -1.0f, -1.0f, 0, 0,
+			1.0f, -1.0f, -1.0f,  1, 0,
+			1.0f, -1.0f, -1.0f,  1, 0,
+			1.0f,  1.0f, -1.0f,  1, 1,
+			-1.0f,  1.0f, -1.0f, 0, 1,
+
+			-1.0f, -1.0f,  1.0f, 0, 1,
+			-1.0f, -1.0f, -1.0f, 0, 0,
+			-1.0f,  1.0f, -1.0f, 1, 0,
+			-1.0f,  1.0f, -1.0f, 1, 0,
+			-1.0f,  1.0f,  1.0f, 1, 1,
+			-1.0f, -1.0f,  1.0f, 0, 1,
+
+			1.0f, -1.0f, -1.0f, 0, 0,
+			1.0f, -1.0f,  1.0f, 0, 1,
+			1.0f,  1.0f,  1.0f, 1, 1,
+			1.0f,  1.0f,  1.0f, 1, 1,
+			1.0f,  1.0f, -1.0f, 1, 0,
+			1.0f, -1.0f, -1.0f, 0, 0,
+
+			-1.0f, -1.0f,  1.0f, 0, 0,
+			-1.0f,  1.0f,  1.0f, 0, 1,
+			1.0f,  1.0f,  1.0f,  1, 1,
+			1.0f,  1.0f,  1.0f,  1, 1,
+			1.0f, -1.0f,  1.0f,  1, 0,
+			-1.0f, -1.0f,  1.0f, 0, 0,
+
+			-1.0f,  1.0f, -1.0f, 0, 0,
+			1.0f,  1.0f, -1.0f,  1, 0,
+			1.0f,  1.0f,  1.0f,  1, 1,
+			1.0f,  1.0f,  1.0f,  1, 1,
+			-1.0f,  1.0f,  1.0f, 0, 1,
+			-1.0f,  1.0f, -1.0f, 0, 0,
+
+			-1.0f, -1.0f, -1.0f, 0, 0,
+			-1.0f, -1.0f,  1.0f, 0, 1,
+			1.0f, -1.0f, -1.0f,  1, 0,
+			1.0f, -1.0f, -1.0f,  1, 0,
+			-1.0f, -1.0f,  1.0f, 0, 1,
+			1.0f, -1.0f,  1.0f,  1, 1
 		};
 
-		unsigned int UVs[] = {
-			0, 0,
-			1, 0,
-			0, 1,
-			1, 1
-		};
 
 		// allocate a block of graphics memory (Vertex Buffer Object)
 		GLuint vertVBO;
@@ -222,28 +253,17 @@ void MyDraw2()
 		glBufferData(GL_ARRAY_BUFFER, numBytes, vertices, GL_STATIC_DRAW);  // set the size of the memory block, also upload some data
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		// UVs
-		GLuint uvVBO;
-		glGenBuffers(1, &uvVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, uvVBO);
-		numBytes = sizeof(UVs);
-		glBufferData(GL_ARRAY_BUFFER, numBytes, UVs, GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
 		// make a structure (Vertex Array) that sets up the rendering state
 		GLuint va = 0;
 		glGenVertexArrays(1, &va);
 		glBindVertexArray(va);
 
-		glEnableVertexAttribArray(inPosition);  // this is an identifier to the vertex shader variable 'inPosition'
 		glBindBuffer(GL_ARRAY_BUFFER, vertVBO);
-		glVertexAttribPointer(inPosition, 4, GL_FLOAT, GL_FALSE, 0, 0);  // specify that the data for 'inPosition' comes from offset 0 in 'vbo' and that it is 4 tightly packed floats
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glEnableVertexAttribArray(inPosition);  // this is an identifier to the vertex shader variable 'inPosition'
+		glVertexAttribPointer(inPosition, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);  // specify that the data for 'inPosition' comes from offset 0 in 'vbo' and that it is 4 tightly packed floats
 
 		glEnableVertexAttribArray(inUV);  // this is an identifier to the vertex shader variable 'inPosition'
-		glBindBuffer(GL_ARRAY_BUFFER, uvVBO);
-		glVertexAttribPointer(inUV, 2, GL_UNSIGNED_INT, GL_FALSE, 0, 0);  // specify that the data for 'inPosition' comes from offset 0 in 'vbo' and that it is 4 tightly packed floats
+		glVertexAttribPointer(inUV, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void *) (sizeof(float) * 3) );  // specify that the data for 'inPosition' comes from offset 0 in 'vbo' and that it is 4 tightly packed floats
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
@@ -259,18 +279,17 @@ void MyDraw2()
 
 		// set view / proj matrix.
 		glm::mat4 projMat = glm::perspective(40.0f, 1.0f, 0.0f, 10.0f);
-		glm::mat4 viewMat = glm::lookAt(glm::vec3(0,0,4), glm::vec3(0,0,0), glm::vec3(0,1,0));
+		glm::mat4 viewMat = glm::lookAt(glm::vec3(0,0,5), glm::vec3(0,0,0), glm::vec3(0,1,0));
 		glUniformMatrix4fv(uProj, 1, false, &projMat[0][0]);
 		glUniformMatrix4fv(uView, 1, false, &viewMat[0][0]);
 
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);  // this draws a 'triangle strip' (search google images) that ends up drawing a textured rectangle
+		glDrawArrays(GL_TRIANGLES, 0, 36);  // this draws a 'triangle strip' (search google images) that ends up drawing a textured rectangle
 
 
 		// Done.  Free resources.
 		glUseProgram(0);  
 		glDeleteProgram(program);
 		glDeleteBuffers(1, &vertVBO);
-		glDeleteBuffers(1, &uvVBO);
 		glDeleteVertexArrays(1, &va);
 		glDeleteTextures(1, &kImage);
 	}
