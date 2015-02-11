@@ -279,7 +279,7 @@ void MyDraw2()
 
 		// set view / proj matrix.
 		glm::mat4 projMat = glm::perspective(40.0f, 1.0f, 0.0f, 10.0f);
-		glm::mat4 viewMat = glm::lookAt(glm::vec3(0,0,5), glm::vec3(0,0,0), glm::vec3(0,1,0));
+		glm::mat4 viewMat = glm::lookAt(glm::vec3(0,0,0), glm::vec3(1,-1,1), glm::vec3(0,1,0));
 		glUniformMatrix4fv(uProj, 1, false, &projMat[0][0]);
 		glUniformMatrix4fv(uView, 1, false, &viewMat[0][0]);
 
